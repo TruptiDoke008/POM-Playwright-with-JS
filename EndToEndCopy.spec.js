@@ -4,25 +4,32 @@ const {POManager} = require('./POManager');
 const { json } = require("stream/consumers");
 
 //Json-> covert to string ->js object
-const dataSet = JSON.parse(JSON.stringify(require("./UserDataforOrder.json")));
+// const dataSet = JSON.parse(JSON.stringify(require("./UserDataforOrder.json")));
 //conevert json file to js.
 
-test('End to End Coding', async ({browser})=>
+const multipledata = JSON.parse(JSON.stringify(require('./Multipledata.json')));
+//This JSON File contain the data in array format so need to iterate by using the below for loop.
+//Wrap all the code into the same for loop.
+
+for(const data of multipledata)
+{
+
+test(`End to End Coding ${data.productName}`, async ({browser})=>
 {
     
     const context = await browser.newContext();
     const page = await context.newPage();
 
     const pOManager = new POManager(page);
-    
+
     //Log in details
     const loginPg = pOManager.getLoginPg(); // creating object of class from POM/LoginPg.js class
     await loginPg.goTo();
-    await loginPg.validLogin(dataSet.userName,dataSet.passWord);
+    await loginPg.validLogin(data.userName,data.passWord);
 
     //products are visible
     const dash = pOManager.getdashboardPg();
-    await dash.searchProdsAddCart(dataSet.productName);
+    await dash.searchProdsAddCart(data.productName);
     await dash.navToCart();
 
     await page.locator("div li").first().waitFor(); 
@@ -37,7 +44,7 @@ test('End to End Coding', async ({browser})=>
     //Fill up the Personal Information and place the order
     const checkout = pOManager.getcheckoutPg();
     await checkout.cardDetails();
-    await checkout.shippingInfo(dataSet.userName);
+    await checkout.shippingInfo(multipledata.userName);
     await checkout.placeorders();
 
     
@@ -46,3 +53,4 @@ test('End to End Coding', async ({browser})=>
     await finalOrder.order();
 
 });
+};
