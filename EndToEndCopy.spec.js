@@ -1,6 +1,11 @@
 const {test, expect} = require ("@playwright/test");
 const { waitForDebugger } = require('inspector');
 const {POManager} = require('./POManager'); 
+const { json } = require("stream/consumers");
+
+//Json-> covert to string ->js object
+const dataSet = JSON.parse(JSON.stringify(require("./UserDataforOrder.json")));
+//conevert json file to js.
 
 test('End to End Coding', async ({browser})=>
 {
@@ -9,19 +14,15 @@ test('End to End Coding', async ({browser})=>
     const page = await context.newPage();
 
     const pOManager = new POManager(page);
-
-    const userName = "truptidoke008@gmail.com";
-    const passWord = "Vikroli@123";
-    const productName = "ZARA COAT 3";
-
+    
     //Log in details
     const loginPg = pOManager.getLoginPg(); // creating object of class from POM/LoginPg.js class
     await loginPg.goTo();
-    await loginPg.validLogin(userName,passWord);
+    await loginPg.validLogin(dataSet.userName,dataSet.passWord);
 
     //products are visible
     const dash = pOManager.getdashboardPg();
-    await dash.searchProdsAddCart(productName);
+    await dash.searchProdsAddCart(dataSet.productName);
     await dash.navToCart();
 
     await page.locator("div li").first().waitFor(); 
@@ -36,7 +37,7 @@ test('End to End Coding', async ({browser})=>
     //Fill up the Personal Information and place the order
     const checkout = pOManager.getcheckoutPg();
     await checkout.cardDetails();
-    await checkout.shippingInfo(userName);
+    await checkout.shippingInfo(dataSet.userName);
     await checkout.placeorders();
 
     
