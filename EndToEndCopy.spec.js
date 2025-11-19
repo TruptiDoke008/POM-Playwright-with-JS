@@ -44,7 +44,7 @@ test(`End to End Coding ${data.productName}`, async ({browser})=>
     //Fill up the Personal Information and place the order
     const checkout = pOManager.getcheckoutPg();
     await checkout.cardDetails();
-    await checkout.shippingInfo(multipledata.userName);
+    await checkout.shippingInfo(data.userName);
     await checkout.placeorders();
 
     
@@ -54,3 +54,4 @@ test(`End to End Coding ${data.productName}`, async ({browser})=>
 
 });
 };
+
